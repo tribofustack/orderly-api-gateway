@@ -1,0 +1,3 @@
+[submodule "orderly-api"]
+	path = orderly-api
+	url = https://github.com/tribofustack/orderly-api.git
