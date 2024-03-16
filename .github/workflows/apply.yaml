@@ -46,10 +46,6 @@ jobs:
       - name: Apply Database
         working-directory: postgres/
         run: kubectl apply -f k8s/
-
-      - name: Apply API
-        working-directory: orderly-api/
-        run: kubectl apply -f k8s/
       
       - name: Apply API Gateway
         working-directory: kong/
