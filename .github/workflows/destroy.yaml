@@ -1,9 +1,9 @@
-name: Apply
+name: Destroy
 
-on: [push, workflow_dispatch]
+on: [workflow_dispatch]
 
 jobs:
-  apply:
+  destroy:
     runs-on: ubuntu-latest
     env:
       GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CRED }}
@@ -31,9 +31,6 @@ jobs:
           cluster_name: ${{ vars.CLUSTER }}
           location: ${{ vars.ZONE }}
 
-      # - name: Setup Cluster Kubernetes
-      #   run: gcloud container clusters get-credentials ${{ vars.CLUSTER }} --region ${{ vars.ZONE }} --project ${{ vars.PROJECT }}
-    
       - name: delete Nginx
         working-directory: nginx/
         run: kubectl delete -f k8s/
