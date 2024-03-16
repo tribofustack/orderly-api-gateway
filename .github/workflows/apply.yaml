@@ -19,14 +19,15 @@ jobs:
             export_environment_variables: true
             create_credentials_file: true
               
+      - name: Setup GCloud
+        uses: "google-github-actions/setup-gcloud@v1"
+        
       - name: Activate Service Account on Google Cloud
         run: gcloud auth activate-service-account --key-file=${{ secrets.GOOGLE_CRED }}
 
       - name: Setup Cluster Kubernetes
         run: gcloud container clusters get-credentials ${{ vars.CLUSTER }} --region ${{ vars.REGION }} --project ${{ vars.PROJECT }}
 
-      # - name: Setup GCloud
-      #   uses: "google-github-actions/setup-gcloud@v1"
 
       - name: Setup Kubernetes
         run: gcloud container clusters get-credentials ${{ vars.CLUSTER }} --region ${{ vars.REGION }} --project ${{ vars.PROJECT }}
