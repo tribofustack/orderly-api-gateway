@@ -82,11 +82,12 @@ data:
               headers:
               - "Content-Type: application/json"
         strip_path: false
+
     consumers:
     - username: orderly
-    jwt_secrets:
-    - consumer: orderly
-      secret: "secret"
+      jwt_secrets:
+      - algorithm: HS256
+        secret: "this_is_a_super_secret_value"
 
     plugins:
     - name: jwt
