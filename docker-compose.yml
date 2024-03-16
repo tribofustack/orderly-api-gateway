@@ -93,7 +93,6 @@ services:
       - api
       - kong
 
-
 networks:
   orderly-net:
     driver: bridge
