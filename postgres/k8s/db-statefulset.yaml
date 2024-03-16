@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: db-container
-        image: postgres:latest
+        image: postgres:16.2-alpine3.18
         ports:
         - containerPort: 5432
         envFrom:
@@ -24,6 +24,7 @@ spec:
         volumeMounts:
         - name: postgres
           mountPath: /data/postgres
+          subPath: orderly
         startupProbe:
           tcpSocket:
             port: 5432

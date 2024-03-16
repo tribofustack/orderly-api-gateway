@@ -30,24 +30,28 @@ jobs:
         with:
           cluster_name: ${{ vars.CLUSTER }}
           location: ${{ vars.ZONE }}
+
+      # - name: Setup Cluster Kubernetes
+      #   run: gcloud container clusters get-credentials ${{ vars.CLUSTER }} --region ${{ vars.ZONE }} --project ${{ vars.PROJECT }}
     
-      - name: Setup Namespace
-        run: |
-            kubectl apply -f namespaces.yaml
-            kubectl config set-context --current --namespace=orderly
-
-      - name: Apply Redis
-        working-directory: redis/
-        run: kubectl apply -f k8s/
-
-      - name: Apply Database
-        working-directory: postgres/
-        run: kubectl apply -f k8s/
-      
-      - name: Apply API Gateway
-        working-directory: kong/
-        run: kubectl apply -f k8s/
-
-      - name: Apply Nginx
+      - name: delete Nginx
         working-directory: nginx/
-        run: kubectl apply -f k8s/
+        run: kubectl delete -f k8s/
+
+      - name: delete API Gateway
+        working-directory: kong/
+        run: kubectl delete -f k8s/
+
+      - name: delete Database
+        working-directory: postgres/
+        run: kubectl delete -f k8s/
+
+      - name: delete Redis
+        working-directory: redis/
+        run: kubectl delete -f k8s/
+
+      - name: Setup Namespace
+        run: kubectl delete -f namespaces.yaml
+
+
+      
