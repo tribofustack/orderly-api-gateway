@@ -36,18 +36,18 @@ jobs:
             kubectl apply -f namespaces.yaml
             kubectl config set-context --current --namespace=orderly
 
-      - name: Apply Redis
+      - name: apply redis
         working-directory: redis/
         run: kubectl apply -f k8s/
 
-      - name: Apply Database
+      - name: apply db
         working-directory: postgres/
         run: kubectl apply -f k8s/
       
-      - name: Apply API Gateway
+      - name: apply API Gateway
         working-directory: kong/
         run: kubectl apply -f k8s/
 
-      - name: Apply Nginx
+      - name: apply reverse-proxy
         working-directory: nginx/
         run: kubectl apply -f k8s/
