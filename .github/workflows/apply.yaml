@@ -13,15 +13,22 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Auth GCloud
-        uses: google-github-actions/setup-gcloud@v0.2.0
+        uses: 'google-github-actions/auth@v2.1.2'
         with:
-          service_account_key: ${{ secrets.GOOGLE_CRED }}
-          export_default_credentials: true
-
+            credentials_json: ${{ secrets.GOOGLE_CRED }}
+            export_environment_variables: true
+            create_credentials_file: true
+              
       - name: Activate Service Account on Google Cloud
         run: gcloud auth activate-service-account --key-file=${{ secrets.GOOGLE_CRED }}
 
       - name: Setup Cluster Kubernetes
+        run: gcloud container clusters get-credentials ${{ vars.CLUSTER }} --region ${{ vars.REGION }} --project ${{ vars.PROJECT }}
+
+      # - name: Setup GCloud
+      #   uses: "google-github-actions/setup-gcloud@v1"
+
+      - name: Setup Kubernetes
         run: gcloud container clusters get-credentials ${{ vars.CLUSTER }} --region ${{ vars.REGION }} --project ${{ vars.PROJECT }}
     
       - name: Setup Namespace
