@@ -26,7 +26,13 @@ jobs:
         run: gcloud container clusters list
 
       - name: Setup Cluster Kubernetes
-        run: gcloud container clusters get-credentials ${{ vars.CLUSTER }} --region ${{ vars.ZONE }} --project ${{ vars.PROJECT }}
+        uses: 'google-github-actions/get-gke-credentials@v2'
+        with:
+          cluster_name: ${{ vars.CLUSTER }}
+          location: ${{ vars.ZONE }}
+
+      # - name: Setup Cluster Kubernetes
+      #   run: gcloud container clusters get-credentials ${{ vars.CLUSTER }} --region ${{ vars.ZONE }} --project ${{ vars.PROJECT }}
     
       - name: Setup Namespace
         run: |
