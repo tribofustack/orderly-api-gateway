@@ -1,0 +1,51 @@
+name: Deploy Apply to
+
+on: [push, workflow_dispatch]
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_CREDENTIALS: ${{ secrets.CREDENTIALS }}
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Auth GCloud
+        uses: 'google-github-actions/auth@v2.1.2'
+        with:
+            credentials_json: ${{ secrets.CREDENTIALS }}
+            export_environment_variables: true
+            # create_credentials_file: true
+
+      - name: Setup GCloud
+        uses: "google-github-actions/setup-gcloud@v1"
+
+      - name: Setup Kubernetes
+        run: gcloud container clusters get-credentials ${{ vars.CLUSTER }} --region ${{ vars.REGION }} --project ${{ vars.PROJECT }}
+    
+      - name: Setup Namespace
+        run: |
+            kubectl apply -f namespaces.yaml
+            kubectl config set-context --current --namespace=orderly
+
+      - name: Apply Redis
+        working-directory: redis/
+        run: kubectl apply -f k8s/
+
+      - name: Apply Database
+        working-directory: postgres/
+        run: kubectl apply -f k8s/
+
+      - name: Apply API
+        working-directory: orderly-api/
+        run: kubectl apply -f k8s/
+      
+      - name: Apply API Gateway
+        working-directory: kong/
+        run: kubectl apply -f k8s/
+
+      - name: Apply Nginx
+        working-directory: nginx/
+        run: kubectl apply -f k8s/  
