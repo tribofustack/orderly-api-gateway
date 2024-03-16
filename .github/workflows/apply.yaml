@@ -18,20 +18,12 @@ jobs:
             credentials_json: ${{ secrets.GOOGLE_CRED }}
             export_environment_variables: true
             create_credentials_file: true
-      
-      - id: auth
-        uses: 'google-github-actions/auth@v2'
-        with:
-          credentials_json: '${{ secrets.GOOGLE_CRED }}'
 
-      - name: 'Set up Cloud SDK'
+      - name: Set up Cloud SDK
         uses: 'google-github-actions/setup-gcloud@v2'
 
-      - name: 'Use gcloud CLI'
-        run: 'gcloud info'
-
-      # - name: Activate Service Account on Google Cloud
-        # run: gcloud auth activate-service-account --key-file=${{ secrets.GOOGLE_CRED }}
+      - name: Use gcloud CLI
+        run: gcloud container clusters list
 
       - name: Setup Cluster Kubernetes
         run: gcloud container clusters get-credentials ${{ vars.CLUSTER }} --region ${{ vars.REGION }} --project ${{ vars.PROJECT }}
