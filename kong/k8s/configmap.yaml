@@ -82,3 +82,17 @@ data:
               headers:
               - "Content-Type: application/json"
         strip_path: false
+    consumers:
+    - username: orderly
+    jwt_secrets:
+    - consumer: orderly
+      secret: "secret"
+
+    plugins:
+    - name: jwt
+      service: api
+      enabled: true
+      config:
+        key_claim_name: kid
+        claims_to_verify:
+        - exp
