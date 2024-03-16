@@ -27,10 +27,6 @@ jobs:
 
       - name: Setup Cluster Kubernetes
         run: gcloud container clusters get-credentials ${{ vars.CLUSTER }} --region ${{ vars.REGION }} --project ${{ vars.PROJECT }}
-
-
-      - name: Setup Kubernetes
-        run: gcloud container clusters get-credentials ${{ vars.CLUSTER }} --region ${{ vars.REGION }} --project ${{ vars.PROJECT }}
     
       - name: Setup Namespace
         run: |
