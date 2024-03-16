@@ -42,7 +42,7 @@ spec:
         - name: KONG_LOG_LEVEL
           value: "debug"
         - name: KONG_PLUGINS
-          value: "bundled"
+          value: "bundled,jwt"
         volumeMounts:
         - name: kong-config-volume
           mountPath: /tmp/kong-config.yml

@@ -19,11 +19,8 @@ jobs:
             export_environment_variables: true
             create_credentials_file: true
 
-      - name: Set up Cloud SDK
+      - name: Setup Cloud SDK
         uses: 'google-github-actions/setup-gcloud@v2'
-
-      - name: Use gcloud CLI
-        run: gcloud container clusters list
 
       - name: Setup Cluster Kubernetes
         uses: 'google-github-actions/get-gke-credentials@v2'
@@ -31,23 +28,26 @@ jobs:
           cluster_name: ${{ vars.CLUSTER }}
           location: ${{ vars.ZONE }}
 
-      - name: delete Nginx
+      - name: Setup Namespace
+        run: kubectl config set-context --current --namespace=orderly   
+
+      - name: delete nginx
         working-directory: nginx/
         run: kubectl delete -f k8s/
 
-      - name: delete API Gateway
+      - name: delete API gateway
         working-directory: kong/
         run: kubectl delete -f k8s/
 
-      - name: delete Database
+      - name: delete db
         working-directory: postgres/
         run: kubectl delete -f k8s/
 
-      - name: delete Redis
+      - name: delete redis
         working-directory: redis/
         run: kubectl delete -f k8s/
 
-      - name: Setup Namespace
+      - name: delete namespace
         run: kubectl delete -f namespaces.yaml
 
 
