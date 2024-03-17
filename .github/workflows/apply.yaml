@@ -46,12 +46,12 @@ jobs:
       
       - name: apply API Gateway
         working-directory: kong/k8s/
-        env:
-          TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
         run: |
           echo "$(cat configmap.yaml)" | envsubst | kubectl apply -f -
           kubectl apply -f deployment.yaml
           kubectl apply -f sevice.yaml
+        env:
+          TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
 
       - name: apply reverse-proxy
         working-directory: nginx/
