@@ -53,17 +53,23 @@ jobs:
         env:
           TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
 
-      - name: apply reverse-proxy
-        working-directory: nginx/k8s
+      - name: Executar comando e definir variável
+        id: define_var
         run: |
           VAR_GCLOUD_AUTH=$(gcloud auth print-identity-token)
           echo "::set-output name=result_var::$VAR_GCLOUD_AUTH"
+
+      - name: apply reverse-proxy
+        working-directory: nginx/k8s
+        run: |          
           echo "$(cat configmap.yaml)" | envsubst | kubectl apply -f -
           kubectl apply -f deployment.yaml
           kubectl apply -f service.yaml
         env:
           SERVERLESS_FUNCTION_ENDPOINT: ${{ vars.SERVERLESS_FUNCTION_ENDPOINT }}
-          GCLOUD_AUTH: "Bearer ${{ steps.apply.outputs.result_var }}"
+          GCLOUD_AUTH: "Bearer ${{ steps.define_var.outputs.result_var }}"
 
       - name: get services
-        run: kubectl get svc -o wide
+        run: |
+          kubectl get svc -o wide
+          echo ${{ steps.define_var.outputs.result_var }}
