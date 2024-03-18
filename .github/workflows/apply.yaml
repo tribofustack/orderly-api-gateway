@@ -61,7 +61,7 @@ jobs:
           kubectl apply -f service.yaml
         env:
           SERVERLESS_FUNCTION_ENDPOINT: ${{ vars.SERVERLESS_FUNCTION_ENDPOINT }}
-          GCLOUD_AUTH: gcloud auth print-identity-token
+          GCLOUD_AUTH: echo Bearer $(gcloud auth print-identity-token)
 
       - name: get services
         run: kubectl get svc -o wide
