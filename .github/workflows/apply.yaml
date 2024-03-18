@@ -70,6 +70,4 @@ jobs:
           GCLOUD_AUTH: "Bearer ${{ steps.define_var.outputs.result_var }}"
 
       - name: get services
-        run: |
-          kubectl get svc -o wide
-          echo ${{ steps.define_var.outputs.result_var }}
+        run: kubectl get svc -o wide
