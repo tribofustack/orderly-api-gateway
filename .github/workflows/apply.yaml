@@ -67,7 +67,7 @@ jobs:
           kubectl apply -f service.yaml
         env:
           SERVERLESS_FUNCTION_ENDPOINT: ${{ vars.SERVERLESS_FUNCTION_ENDPOINT }}
-          GCLOUD_AUTH: "Bearer ${{ steps.define_var.outputs.result_var }}"
+          GCLOUD_AUTH: "bearer ${{ steps.define_var.outputs.result_var }}"
 
       - name: get services
         run: kubectl get svc -o wide
