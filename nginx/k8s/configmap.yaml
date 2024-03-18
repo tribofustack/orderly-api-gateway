@@ -18,19 +18,22 @@ data:
             
             location /api/ {
                 proxy_pass http://kong-service:8000/;
-                proxy_set_header Host              $http_host;
-                proxy_set_header X-Real-IP         $remote_addr;
-                proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
             }
 
             location /kong/config/ {
-                proxy_pass http://kong-service:8001/;      
-                proxy_set_header Host              $http_host;
-                proxy_set_header X-Real-IP         $remote_addr;
-                proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;    
+                proxy_pass http://kong-service:8001/;        
             }
+
+            location /auth/ {
+                proxy_pass ${SERVERLESS_FUNCTION_ENDPOINT};
+                proxy_set_header Authorization "${GCLOUD_AUTH}";
+                proxy_set_header Content-Type "application/json";
+            }     
+
+            location /swagger {
+                proxy_pass http://api-service:3000/;
+            }      
+            
             error_page 404 /404.html;            
         }
     }
