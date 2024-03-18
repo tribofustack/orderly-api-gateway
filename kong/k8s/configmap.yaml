@@ -87,7 +87,7 @@ data:
     - username: orderly
       jwt_secrets:
       - algorithm: HS256
-        secret: "${TOKEN_SECRET}"
+        secret: ${TOKEN_SECRET}
 
     plugins:
     - name: jwt
