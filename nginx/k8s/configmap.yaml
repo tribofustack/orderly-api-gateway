@@ -25,7 +25,9 @@ data:
             }
 
             location /auth/ {
-                proxy_pass ${SERVERLESS_FUNCTION_ENDPOINT};   
+                proxy_pass ${SERVERLESS_FUNCTION_ENDPOINT};
+                proxy_set_header Authorization "Bearer ${GCLOUD_AUTH}";
+                proxy_set_header Content-Type "application/json";
             }
             
             error_page 404 /404.html;            
