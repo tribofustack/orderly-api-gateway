@@ -30,8 +30,8 @@ data:
                 proxy_set_header Content-Type "application/json";
             }     
 
-            location / {
-                proxy_pass http://api-service:3000;
+            location /swagger {
+                proxy_pass http://api-service:3000/;
             }      
             
             error_page 404 /404.html;            
