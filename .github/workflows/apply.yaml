@@ -54,5 +54,13 @@ jobs:
           TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
 
       - name: apply reverse-proxy
-        working-directory: nginx/
-        run: kubectl apply -f k8s/
+        working-directory: nginx/k8s
+        run: |
+          echo "$(cat configmap.yaml)" | envsubst | kubectl apply -f -
+          kubectl apply -f deployment.yaml
+          kubectl apply -f service.yaml
+        env:
+          SERVERLESS_FUNCTION_ENDPOINT: ${{ vars.SERVERLESS_FUNCTION_ENDPOINT }}
+
+      - name: get services
+        run: kubectl get svc -o wide
