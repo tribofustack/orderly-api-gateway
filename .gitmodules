@@ -1,3 +1,12 @@
 [submodule "orderly-api"]
 	path = orderly-api
 	url = https://github.com/tribofustack/orderly-api.git
+[submodule "ms-financial"]
+	path = ms-financial
+	url = https://github.com/tribofustack/ms-financial.git
+[submodule "ms-checkout"]
+	path = ms-checkout
+	url = https://github.com/tribofustack/ms-checkout.git
+[submodule "ms-checkin"]
+	path = ms-checkin
+	url = https://github.com/tribofustack/ms-checkin.git

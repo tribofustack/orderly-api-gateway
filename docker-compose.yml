@@ -2,7 +2,7 @@ version: '3'
 
 services:
   redis:
-    build: ./redis
+    build: ./infra/redis
     container_name: redis-server
     # ports:
     #   - 6379:6379
@@ -10,7 +10,7 @@ services:
       - orderly-net
 
   rabbitmq:
-    build: ./rabbitmq
+    build: ./infra/rabbitmq
     container_name: rabbitmq-server
     environment:
       - RABBITMQ_ERLANG_COOKIE=${AMQP_COOKIE}
@@ -21,7 +21,7 @@ services:
       - orderly-net
 
   postgres:
-    build: ./postgres
+    build: ./infra/postgres
     container_name: postgres-database
     # ports:
     #   - 5432:5432
@@ -38,30 +38,11 @@ services:
       - orderly-net
     restart: unless-stopped
 
-  api:
-    build: ./orderly-api
-    container_name: node-api
-    # ports:
-    #   - 3000:3000
-    volumes:
-      - ./orderly-api:/usr/api
-    networks:
-      - orderly-net
-    depends_on:
-      - redis
-      - postgres
-    restart: always
-    links:
-      - postgres
-      - redis
-    env_file:
-      - ./orderly-api/.env.production
-
   kong:
-    build: ./kong
+    build: ./infra/kong
     container_name: kong-stateless
     volumes:
-     - ./kong/kong-config.yml:/tmp/kong-config.yml
+      - ./kong/kong-config.yml:/tmp/kong-config.yml
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /tmp/kong-config.yml
@@ -87,7 +68,7 @@ services:
       - 8443:8443
 
   nginx:
-    build: ./nginx
+    build: ./infra/nginx
     container_name: nginx-proxy
     ports:
       - 80:80
@@ -104,6 +85,82 @@ services:
       - api
       - kong
 
+  api:
+    build: ./orderly-api
+    container_name: node-api
+    # ports:
+    #   - 3000:3000
+    volumes:
+      - ./orderly-api:/usr/api
+    networks:
+      - orderly-net
+    depends_on:
+      - redis
+      - postgres
+    restart: always
+    links:
+      - postgres
+      - redis
+    env_file:
+      - ./orderly-api/.env.production
+
+  # ms_financial:
+  #   build: ./ms-financial
+  #   container_name: ms-financial-api
+  #   # ports:
+  #   #   - 3001:3001
+  #   volumes:
+  #     - ./ms-financial:/usr/api
+  #   networks:
+  #     - orderly-net
+  #   depends_on:
+  #     - redis
+  #     - postgres
+  #   restart: always
+  #   links:
+  #     - postgres
+  #     - redis
+  #   env_file:
+  #     - ./ms-financial/.env.production
+
+  ms_checkin:
+    build: ./ms-checkin
+    container_name: ms-checkin-api
+    # ports:
+    #   - 3002:3002
+    volumes:
+      - ./ms-checkin:/usr/api
+    networks:
+      - orderly-net
+    depends_on:
+      - redis
+      - postgres
+    restart: always
+    links:
+      - postgres
+      - redis
+    env_file:
+      - ./ms-checkin/.env.production
+
+  # ms_checkout:
+  #   build: ./ms-checkout
+  #   container_name: ms-checkout-api
+  #   # ports:
+  #   #   - 3003:3003
+  #   volumes:
+  #     - ./ms-checkout:/usr/api
+  #   networks:
+  #     - orderly-net
+  #   depends_on:
+  #     - redis
+  #     - postgres
+  #   restart: always
+  #   links:
+  #     - postgres
+  #     - redis
+  #   env_file:
+  #     - ./ms-checkout/.env.production
+ 
 networks:
   orderly-net:
     driver: bridge
