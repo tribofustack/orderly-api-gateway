@@ -1,48 +1,25 @@
 version: '3'
 
 services:
-  redis:
-    build: ./infra/redis
-    container_name: redis-server
-    # ports:
-    #   - 6379:6379
-    networks:
-      - orderly-net
-
   rabbitmq:
     build: ./infra/rabbitmq
     container_name: rabbitmq-server
+    env_file: ./infra/rabbitmq/.env
     environment:
-      - RABBITMQ_ERLANG_COOKIE=${AMQP_COOKIE}
-      - RABBITMQ_DEFAULT_USER=${AMQP_USERNAME}
-      - RABBITMQ_DEFAULT_PASS=${AMQP_PASSWORD}
-    env_file: .env
-    networks:
-      - orderly-net
-
-  postgres:
-    build: ./infra/postgres
-    container_name: postgres-database
+      - RABBITMQ_ERLANG_COOKIE=TRIBUFUSTACK
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
     # ports:
-    #   - 5432:5432
-    environment:
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-      PGDATA: /data/postgres
-    env_file:
-      - ./orderly-api/.env.production
-    volumes:
-      - postgres:/data/postgres
+    #   - 15672:15672
+    #   - 5672:5672
     networks:
       - orderly-net
-    restart: unless-stopped
-
+ 
   kong:
     build: ./infra/kong
     container_name: kong-stateless
     volumes:
-      - ./kong/kong-config.yml:/tmp/kong-config.yml
+      - ./infra/kong/kong-config.yml:/tmp/kong-config.yml
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /tmp/kong-config.yml
@@ -73,7 +50,7 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     healthcheck:
       test: ["CMD", "nginx", "-t"]
       interval: 30s
@@ -82,90 +59,54 @@ services:
     networks:
       - orderly-net
     depends_on:
-      - api
+      - ms_checkin
       - kong
 
-  api:
-    build: ./orderly-api
-    container_name: node-api
-    # ports:
-    #   - 3000:3000
+
+  #checkin
+  ms_checkin_db:
+    build: ./infra/postgres
+    container_name: ms-checkin-database
+    env_file:
+      - ./ms-checkin/.env.production
+    environment:
+      - POSTGRES_USER=checkin_user
+      - POSTGRES_PASSWORD=checkin_password
+      - POSTGRES_DB=checkin_database
+      - PGDATA=/data/postgres
     volumes:
-      - ./orderly-api:/usr/api
+      - ms_checkin_db:/data/postgres
     networks:
       - orderly-net
-    depends_on:
-      - redis
-      - postgres
-    restart: always
-    links:
-      - postgres
-      - redis
-    env_file:
-      - ./orderly-api/.env.production
-
-  # ms_financial:
-  #   build: ./ms-financial
-  #   container_name: ms-financial-api
-  #   # ports:
-  #   #   - 3001:3001
-  #   volumes:
-  #     - ./ms-financial:/usr/api
-  #   networks:
-  #     - orderly-net
-  #   depends_on:
-  #     - redis
-  #     - postgres
-  #   restart: always
-  #   links:
-  #     - postgres
-  #     - redis
-  #   env_file:
-  #     - ./ms-financial/.env.production
-
+    restart: unless-stopped
   ms_checkin:
     build: ./ms-checkin
     container_name: ms-checkin-api
-    # ports:
-    #   - 3002:3002
     volumes:
-      - ./ms-checkin:/usr/api
+      - ./ms-checkin:/usr/checkin/api
     networks:
       - orderly-net
     depends_on:
-      - redis
-      - postgres
+      - ms_checkin_db
     restart: always
     links:
-      - postgres
-      - redis
+      - ms_checkin_db
     env_file:
       - ./ms-checkin/.env.production
+    # ports:
+    #   - 3001:3001
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://ms_checkin:3001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
-  # ms_checkout:
-  #   build: ./ms-checkout
-  #   container_name: ms-checkout-api
-  #   # ports:
-  #   #   - 3003:3003
-  #   volumes:
-  #     - ./ms-checkout:/usr/api
-  #   networks:
-  #     - orderly-net
-  #   depends_on:
-  #     - redis
-  #     - postgres
-  #   restart: always
-  #   links:
-  #     - postgres
-  #     - redis
-  #   env_file:
-  #     - ./ms-checkout/.env.production
- 
 networks:
   orderly-net:
     driver: bridge
     external: false
 
 volumes:
-  postgres:
+  ms_checkin_db:
   kong_data: {}

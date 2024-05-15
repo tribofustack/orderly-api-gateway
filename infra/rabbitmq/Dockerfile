@@ -1,4 +1,1 @@
-FROM rabbitmq:3.12-management
-
-# EXPOSE 5672
-# EXPOSE 15672
+FROM rabbitmq:3.12.14-management

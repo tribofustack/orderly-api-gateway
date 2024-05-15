@@ -44,15 +44,15 @@ data:
                 proxy_pass http://kong-service:8001/;        
             }
 
-            location /auth/ {
-                proxy_pass ${SERVERLESS_FUNCTION_ENDPOINT};
-                proxy_set_header Authorization "${GCLOUD_AUTH}";
-                proxy_set_header Content-Type "application/json";
-            }     
+            # location /auth/ {
+            #     proxy_pass ${SERVERLESS_FUNCTION_ENDPOINT};
+            #     proxy_set_header Authorization "${GCLOUD_AUTH}";
+            #     proxy_set_header Content-Type "application/json";
+            # }     
 
-            location /swagger {
-                proxy_pass http://api-service:3000/;
-            }      
+            # location /swagger {
+            #     proxy_pass http://api-service:3000/;
+            # }      
             
             error_page 404 /404.html;            
         }

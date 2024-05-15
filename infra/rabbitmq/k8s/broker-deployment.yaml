@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: broker-container
-        image: rabbitmq:3.12-management
+        image: rabbitmq:3.12.14-management
         envFrom:
         - configMapRef:
             name: broker-configmap
