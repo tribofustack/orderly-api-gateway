@@ -64,23 +64,27 @@ services:
           headers:
           - "Content-Type: application/json"
     strip_path: false
-#   - name: payments
-#     methods: [GET, POST, DELETE]
-#     paths:
-#     - /payments/order/(?<id>\d+)
-#     - /payments/order/(?<id>\d+)/approve
-#     - /payments/order/(?<id>\d+)/cancel
-#     plugins:
-#     - name: http-log
-#       config:
-#         http_endpoint: https://webhook.site/2372f3a5-5ffc-4291-8e6a-ace1b16621e4
-#         method: POST
-#     - name: request-transformer
-#       config:
-#         add:
-#           headers:
-#           - "Content-Type: application/json"
-#     strip_path: false
+
+- name: ms_financial
+  url: http://ms_financial:3003
+  routes:
+  - name: payments
+    methods: [GET, POST, DELETE]
+    paths:
+    - /payments/order/(?<id>\d+)
+    - /payments/order/(?<id>\d+)/approve
+    - /payments/order/(?<id>\d+)/cancel
+    plugins:
+    - name: http-log
+      config:
+        http_endpoint: https://webhook.site/2372f3a5-5ffc-4291-8e6a-ace1b16621e4
+        method: POST
+    - name: request-transformer
+      config:
+        add:
+          headers:
+          - "Content-Type: application/json"
+    strip_path: false
 
 # plugins:
 # - name: jwt

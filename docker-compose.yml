@@ -7,6 +7,7 @@ networks:
 volumes:
   ms_checkin_db:
   ms_checkout_db:
+  ms_financial_db:
   kong_data: {}
 
 services:
@@ -130,6 +131,7 @@ services:
       - orderly-net
     depends_on:
       - ms_checkout_db
+      - rabbitmq
     restart: always
     links:
       - ms_checkout_db
@@ -137,6 +139,44 @@ services:
       - ./ms-checkout/.env.production
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://ms_checkout:3002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  #financial
+  ms_financial_db:
+    build: ./infra/postgres
+    container_name: ms-financial-database
+    env_file:
+      - ./ms-financial/.env.production
+    environment:
+      - POSTGRES_USER=financial_user
+      - POSTGRES_PASSWORD=financial_password
+      - POSTGRES_DB=financial_database
+      - PGDATA=/data/postgres
+    volumes:
+      - ms_financial_db:/data/postgres
+    networks:
+      - orderly-net
+    restart: unless-stopped    
+  ms_financial:
+    build: ./ms-financial
+    container_name: ms-financial-api
+    volumes:
+      - ./ms-financial:/usr/financial/api
+    networks:
+      - orderly-net
+    depends_on:
+      - ms_financial_db
+      - rabbitmq
+    restart: always
+    links:
+      - ms_financial_db
+    env_file:
+      - ./ms-financial/.env.production
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://ms_financial:3003/health"]
       interval: 10s
       timeout: 5s
       retries: 3
