@@ -40,15 +40,11 @@ jobs:
             kubectl config set-context --current --namespace=orderly
 
       - name: apply rabbitmq
-        working-directory: rabbitmq/
-        run: kubectl apply -f k8s/
-
-      - name: apply db
-        working-directory: postgres/
+        working-directory: infra/rabbitmq/
         run: kubectl apply -f k8s/
       
       - name: apply API Gateway
-        working-directory: kong/k8s/
+        working-directory: infra/kong/k8s/
         run: |
           echo "$(cat configmap.yaml)" | envsubst | kubectl apply -f -
           kubectl apply -f deployment.yaml
@@ -56,21 +52,9 @@ jobs:
         env:
           TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
 
-      - name: Executar comando e definir variável
-        id: define_var
-        run: |
-          VAR_GCLOUD_AUTH=$(gcloud auth print-identity-token)
-          echo "::set-output name=result_var::$VAR_GCLOUD_AUTH"
-
       - name: apply reverse-proxy
-        working-directory: nginx/k8s
-        run: |          
-          echo "$(cat configmap.yaml)" | envsubst | kubectl apply -f -
-          kubectl apply -f deployment.yaml
-          kubectl apply -f service.yaml
-        env:
-          SERVERLESS_FUNCTION_ENDPOINT: ${{ vars.SERVERLESS_FUNCTION_ENDPOINT }}
-          GCLOUD_AUTH: "bearer ${{ steps.define_var.outputs.result_var }}"
+        working-directory: infra/nginx/
+        run: kubectl apply -f k8s/
 
       - name: get services
         run: kubectl get svc -o wide
