@@ -1,8 +1,8 @@
 _format_version: "1.1"
 
 services:
-- name: categories
-  url: http://api:3000/products/category
+- name: ms_checkin_categories
+  url: http://ms_checkin:3001/products/category
   routes:
   - name: get-categories
     methods: [GET]
@@ -16,30 +16,15 @@ services:
         hour: 10
         policy: local
     strip_path: true
-
-- name: api
-  url: http://api:3000
+- name: ms_checkin
+  url: http://ms_checkin:3001
   routes:
   - name: customers
     methods: [GET, POST]
     paths:
     - /customers
-    - /customers/(?<cpf>\d+)
-    plugins:
-    - name: request-transformer
-      config:
-        add:
-          headers:
-          - "Content-Type: application/json"
-    strip_path: false
-  - name: orders
-    methods: [GET, POST]
-    paths:
-    - /orders
-    - /orders/(?<id>\d+)/prepare
-    - /orders/(?<id>\d+)/withdrawn
-    - /orders/customer/(?<id>\d+)
-    - /orders/(?<id>\d+)/status
+    - /customers/document/(?<cpf>\d+)
+    - /customers/(?<id>\d+)
     plugins:
     - name: request-transformer
       config:
@@ -60,6 +45,29 @@ services:
           - "Content-Type: application/json"
     methods: [POST, PUT, DELETE, GET]
     strip_path: false
+
+- name: ms_checkout
+  url: http://ms_checkout:3002
+  routes:
+  - name: orders
+    methods: [GET, POST]
+    paths:
+    - /orders
+    - /orders/(?<id>\d+)/prepare
+    - /orders/(?<id>\d+)/withdrawn
+    - /orders/customer/(?<id>\d+)
+    - /orders/(?<id>\d+)/status
+    plugins:
+    - name: request-transformer
+      config:
+        add:
+          headers:
+          - "Content-Type: application/json"
+    strip_path: false
+
+- name: ms_financial
+  url: http://ms_financial:3003
+  routes:
   - name: payments
     methods: [GET, POST, DELETE]
     paths:
@@ -69,7 +77,7 @@ services:
     plugins:
     - name: http-log
       config:
-        http_endpoint: https://webhook.site/2372f3a5-5ffc-4291-8e6a-ace1b16621e4
+        http_endpoint: https://webhook.site/ad3a0bcc-25f8-491e-8c18-fae253167580
         method: POST
     - name: request-transformer
       config:
@@ -78,17 +86,17 @@ services:
           - "Content-Type: application/json"
     strip_path: false
 
-plugins:
-- name: jwt
-  route: get-categories
-  enabled: true
-  config:
-    key_claim_name: kid
-    claims_to_verify:
-    - exp
-consumers:
-- username: deal
-  jwt_secrets:
-  - algorithm: HS256
-    secret: this_is_a_super_secret_value
+# plugins:
+# - name: jwt
+#   route: get-categories
+#   enabled: true
+#   config:
+#     key_claim_name: kid
+#     claims_to_verify:
+#     - exp
+# consumers:
+# - username: deal
+#   jwt_secrets:
+#   - algorithm: HS256
+#     secret: this_is_a_super_secret_value
 

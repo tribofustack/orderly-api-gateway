@@ -7,8 +7,9 @@ data:
   kong-config.yml: |
     _format_version: "1.1"
     services:
-    - name: categories
-      url: http://api-service:3000/products/category
+
+    - name: ms_checkin_categories
+      url: http://ms_checkin:3001/products/category
       routes:
       - name: get-categories
         methods: [GET]
@@ -22,8 +23,9 @@ data:
             hour: 10
             policy: local
         strip_path: true
-    - name: api
-      url: http://api-service:3000
+
+    - name: ms_checkin
+      url: http://ms_checkin:3001
       routes:
       - name: customers
         methods: [GET, POST]
@@ -37,6 +39,24 @@ data:
               headers:
               - "Content-Type: application/json"
         strip_path: false
+
+      - name: products
+        paths:
+        - /products
+        - /products/(?<id>\d+)
+        - /products/category/(?<id>\d+)
+        plugins:
+        - name: request-transformer
+          config:
+            add:
+              headers:
+              - "Content-Type: application/json"
+        methods: [POST, PUT, DELETE, GET]
+        strip_path: false
+
+    - name: api
+      url: http://api-service:3000
+      routes:
       - name: orders
         methods: [GET, POST]
         paths:
@@ -52,19 +72,7 @@ data:
               headers:
               - "Content-Type: application/json"
         strip_path: false
-      - name: products
-        paths:
-        - /products
-        - /products/(?<id>\d+)
-        - /products/category/(?<id>\d+)
-        plugins:
-        - name: request-transformer
-          config:
-            add:
-              headers:
-              - "Content-Type: application/json"
-        methods: [POST, PUT, DELETE, GET]
-        strip_path: false
+
       - name: payments
         methods: [GET, POST, DELETE]
         paths:

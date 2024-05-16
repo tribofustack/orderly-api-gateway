@@ -39,8 +39,8 @@ jobs:
             kubectl apply -f namespaces.yaml
             kubectl config set-context --current --namespace=orderly
 
-      - name: apply redis
-        working-directory: redis/
+      - name: apply rabbitmq
+        working-directory: rabbitmq/
         run: kubectl apply -f k8s/
 
       - name: apply db

@@ -4,7 +4,7 @@ metadata:
   name: nginx-deployment
   namespace: orderly
 spec:
-  replicas: 1 # Você pode ajustar o número de réplicas conforme necessário
+  replicas: 1
   selector:
     matchLabels:
       app: nginx
@@ -16,9 +16,9 @@ spec:
       automountServiceAccountToken: false
       containers:
       - name: nginx-container
-        image: nginx:latest # Use a imagem do NGINX que você já está usando no Docker
+        image: nginx:latest
         ports:
-        - containerPort: 80 # Porta que o NGINX está ouvindo
+        - containerPort: 80
         volumeMounts:
         - name: nginx-config
           mountPath: /etc/nginx
