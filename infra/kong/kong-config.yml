@@ -23,7 +23,8 @@ services:
     methods: [GET, POST]
     paths:
     - /customers
-    - /customers/(?<cpf>\d+)
+    - /customers/document/(?<cpf>\d+)
+    - /customers/(?<id>\d+)
     plugins:
     - name: request-transformer
       config:
@@ -45,24 +46,24 @@ services:
     methods: [POST, PUT, DELETE, GET]
     strip_path: false
 
-# - name: api
-#   url: http://api:3000
-#   routes:
-#   - name: orders
-#     methods: [GET, POST]
-#     paths:
-#     - /orders
-#     - /orders/(?<id>\d+)/prepare
-#     - /orders/(?<id>\d+)/withdrawn
-#     - /orders/customer/(?<id>\d+)
-#     - /orders/(?<id>\d+)/status
-#     plugins:
-#     - name: request-transformer
-#       config:
-#         add:
-#           headers:
-#           - "Content-Type: application/json"
-#     strip_path: false
+- name: ms_checkout
+  url: http://ms_checkout:3002
+  routes:
+  - name: orders
+    methods: [GET, POST]
+    paths:
+    - /orders
+    - /orders/(?<id>\d+)/prepare
+    - /orders/(?<id>\d+)/withdrawn
+    - /orders/customer/(?<id>\d+)
+    - /orders/(?<id>\d+)/status
+    plugins:
+    - name: request-transformer
+      config:
+        add:
+          headers:
+          - "Content-Type: application/json"
+    strip_path: false
 #   - name: payments
 #     methods: [GET, POST, DELETE]
 #     paths:

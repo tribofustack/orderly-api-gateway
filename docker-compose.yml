@@ -1,5 +1,14 @@
 version: '3'
 
+networks:
+  orderly-net:
+    driver: bridge
+    external: false
+volumes:
+  ms_checkin_db:
+  ms_checkout_db:
+  kong_data: {}
+
 services:
   rabbitmq:
     build: ./infra/rabbitmq
@@ -9,9 +18,6 @@ services:
       - RABBITMQ_ERLANG_COOKIE=TRIBUFUSTACK
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
-    # ports:
-    #   - 15672:15672
-    #   - 5672:5672
     networks:
       - orderly-net
  
@@ -62,7 +68,6 @@ services:
       - ms_checkin
       - kong
 
-
   #checkin
   ms_checkin_db:
     build: ./infra/postgres
@@ -93,8 +98,6 @@ services:
       - ms_checkin_db
     env_file:
       - ./ms-checkin/.env.production
-    # ports:
-    #   - 3001:3001
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://ms_checkin:3001/health"]
       interval: 10s
@@ -102,11 +105,39 @@ services:
       retries: 3
       start_period: 30s
 
-networks:
-  orderly-net:
-    driver: bridge
-    external: false
-
-volumes:
-  ms_checkin_db:
-  kong_data: {}
+  #checkout
+  ms_checkout_db:
+    build: ./infra/postgres
+    container_name: ms-checkout-database
+    env_file:
+      - ./ms-checkout/.env.production
+    environment:
+      - POSTGRES_USER=checkout_user
+      - POSTGRES_PASSWORD=checkout_password
+      - POSTGRES_DB=checkout_database
+      - PGDATA=/data/postgres
+    volumes:
+      - ms_checkout_db:/data/postgres
+    networks:
+      - orderly-net
+    restart: unless-stopped    
+  ms_checkout:
+    build: ./ms-checkout
+    container_name: ms-checkout-api
+    volumes:
+      - ./ms-checkout:/usr/checkout/api
+    networks:
+      - orderly-net
+    depends_on:
+      - ms_checkout_db
+    restart: always
+    links:
+      - ms_checkout_db
+    env_file:
+      - ./ms-checkout/.env.production
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://ms_checkout:3002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
