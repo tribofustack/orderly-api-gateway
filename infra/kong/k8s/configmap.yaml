@@ -9,7 +9,7 @@ data:
     services:
 
     - name: ms_checkin_categories
-      url: http://ms_checkin:3001/products/category
+      url: http://ms-checkin-service:3001/products/category
       routes:
       - name: get-categories
         methods: [GET]
@@ -25,13 +25,14 @@ data:
         strip_path: true
 
     - name: ms_checkin
-      url: http://ms_checkin:3001
+      url: http://ms-checkin-service:3001
       routes:
       - name: customers
         methods: [GET, POST]
         paths:
         - /customers
-        - /customers/(?<cpf>\d+)
+        - /customers/document/(?<cpf>\d+)
+        - /customers/(?<id>\d+)
         plugins:
         - name: request-transformer
           config:
@@ -39,7 +40,6 @@ data:
               headers:
               - "Content-Type: application/json"
         strip_path: false
-
       - name: products
         paths:
         - /products
@@ -54,8 +54,8 @@ data:
         methods: [POST, PUT, DELETE, GET]
         strip_path: false
 
-    - name: api
-      url: http://api-service:3000
+    - name: ms_checkout
+      url: http://ms-checkout-service:3002
       routes:
       - name: orders
         methods: [GET, POST]
@@ -73,6 +73,9 @@ data:
               - "Content-Type: application/json"
         strip_path: false
 
+    - name: ms_financial
+      url: http://ms-financial-service:3003
+      routes:
       - name: payments
         methods: [GET, POST, DELETE]
         paths:
@@ -82,7 +85,7 @@ data:
         plugins:
         - name: http-log
           config:
-            http_endpoint: https://webhook.site/2372f3a5-5ffc-4291-8e6a-ace1b16621e4
+            http_endpoint: https://webhook.site/ad3a0bcc-25f8-491e-8c18-fae253167580
             method: POST
         - name: request-transformer
           config:
@@ -99,7 +102,21 @@ data:
 
     plugins:
     - name: jwt
-      service: api
+      service: ms_financial
+      enabled: true
+      config:
+        key_claim_name: kid
+        claims_to_verify:
+        - exp
+    - name: jwt
+      service: ms_checkout
+      enabled: true
+      config:
+        key_claim_name: kid
+        claims_to_verify:
+        - exp
+    - name: jwt
+      service: ms_checkin
       enabled: true
       config:
         key_claim_name: kid

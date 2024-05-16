@@ -16,7 +16,6 @@ data:
             least_conn;
             server broker-service-cp:15672 weight=10 max_fails=3 fail_timeout=30s;
         }  
-              
         server {
             listen 80;
             
@@ -39,21 +38,9 @@ data:
             location /api/ {
                 proxy_pass http://kong-service:8000/;
             }
-
             location /kong/config/ {
                 proxy_pass http://kong-service:8001/;        
             }
-
-            # location /auth/ {
-            #     proxy_pass ${SERVERLESS_FUNCTION_ENDPOINT};
-            #     proxy_set_header Authorization "${GCLOUD_AUTH}";
-            #     proxy_set_header Content-Type "application/json";
-            # }     
-
-            # location /swagger {
-            #     proxy_pass http://api-service:3000/;
-            # }      
-            
             error_page 404 /404.html;            
         }
     }

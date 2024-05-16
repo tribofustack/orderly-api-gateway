@@ -32,19 +32,15 @@ jobs:
         run: kubectl config set-context --current --namespace=orderly   
 
       - name: delete nginx
-        working-directory: nginx/
+        working-directory: infra/nginx/
         run: kubectl delete -f k8s/
 
       - name: delete API gateway
-        working-directory: kong/
+        working-directory: infra/kong/
         run: kubectl delete -f k8s/
 
-      - name: delete db
-        working-directory: postgres/
-        run: kubectl delete -f k8s/
-
-      - name: delete redis
-        working-directory: redis/
+      - name: delete rabbitmq
+        working-directory: infra/rabbitmq/
         run: kubectl delete -f k8s/
 
       - name: delete namespace
