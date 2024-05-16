@@ -77,7 +77,7 @@ services:
     plugins:
     - name: http-log
       config:
-        http_endpoint: https://webhook.site/2372f3a5-5ffc-4291-8e6a-ace1b16621e4
+        http_endpoint: https://webhook.site/ad3a0bcc-25f8-491e-8c18-fae253167580
         method: POST
     - name: request-transformer
       config:
