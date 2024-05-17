@@ -74,7 +74,7 @@ services:
       - ms_checkin
       - kong
 
-  #checkin
+  # checkin
   ms_checkin_db:
     build: ./infra/postgres
     container_name: ms-checkin-database
@@ -111,7 +111,7 @@ services:
       retries: 3
       start_period: 30s
 
-  #checkout
+  # checkout
   ms_checkout_db:
     build: ./infra/postgres
     container_name: ms-checkout-database
@@ -150,7 +150,7 @@ services:
       retries: 3
       start_period: 30s
 
-  #financial
+  # financial
   ms_financial_db:
     build: ./infra/postgres
     container_name: ms-financial-database
@@ -183,8 +183,36 @@ services:
     env_file:
       - ./ms-financial/.env.production
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:3003/health"]
+      test: ["CMD", "curl", "--fail", "http://ms_financial:3003/health"]
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 30s
+
+  # auth
+  ms_auth_db:
+    image: mongo
+    container_name: ms-auth-database
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    env_file:
+      - ./ms-auth/.env.production
+    networks:
+      - orderly-net  
+  
+  ms_auth:
+    build: ./ms-auth
+    container_name: ms-auth-api
+    volumes:
+      - ./ms-auth:/usr/auth/api
+    networks:
+      - orderly-net
+    depends_on:
+      - ms_auth_db
+    restart: on-failure
+    links:
+      - ms_auth_db
+    env_file:
+      - ./ms-auth/.env.production
