@@ -94,6 +94,22 @@ data:
               - "Content-Type: application/json"
         strip_path: false
 
+    - name: ms_auth
+      url: http://ms-auth-service:3000
+      routes:
+      - name: auth
+        methods: [POST]
+        paths:
+        - /customer/auth
+        plugins:
+        - name: rate-limiting
+          config:
+            second: 3
+            minute: 5
+            hour: 10
+            policy: local
+        strip_path: false
+
     consumers:
     - username: orderly
       jwt_secrets:
