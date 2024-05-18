@@ -23,23 +23,6 @@ data:
               headers:
               - "Content-Type: application/json"
         strip_path: false
-
-    - name: ms_checkin_categories
-      url: http://ms-checkin-service:3001/products/category
-      routes:
-      - name: get-categories
-        methods: [GET]
-        paths:
-        - /categories
-        plugins:
-        - name: rate-limiting
-          config:
-            second: 3
-            minute: 5
-            hour: 10
-            policy: local
-        strip_path: true
-
     - name: ms_checkin
       url: http://ms-checkin-service:3001
       routes:
@@ -60,6 +43,7 @@ data:
         paths:
         - /products
         - /products/(?<id>\d+)
+        - /products/category
         - /products/category/(?<id>\d+)
         plugins:
         - name: request-transformer
@@ -69,7 +53,6 @@ data:
               - "Content-Type: application/json"
         methods: [POST, PUT, DELETE, GET]
         strip_path: false
-
     - name: ms_checkout
       url: http://ms-checkout-service:3002
       routes:
@@ -88,7 +71,6 @@ data:
               headers:
               - "Content-Type: application/json"
         strip_path: false
-
     - name: ms_auth
       url: http://ms-auth-service:3000
       routes:
@@ -108,13 +90,11 @@ data:
             http_endpoint: https://webhook.site/ad3a0bcc-25f8-491e-8c18-fae253167580
             method: POST
         strip_path: false
-
     consumers:
     - username: orderly
       jwt_secrets:
       - algorithm: HS256
         secret: ${TOKEN_SECRET}
-
     plugins:
     - name: jwt
       service: ms_financial
