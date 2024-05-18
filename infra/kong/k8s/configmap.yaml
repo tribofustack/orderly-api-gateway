@@ -99,9 +99,9 @@ data:
         plugins:
         - name: rate-limiting
           config:
-            second: 3
-            minute: 5
-            hour: 10
+            second: 5
+            minute: 7
+            hour: 13
             policy: local
         - name: http-log
           config:
