@@ -7,6 +7,22 @@ data:
   kong-config.yml: |
     _format_version: "1.1"
     services:
+    - name: ms_financial
+      url: http://ms-financial-service:3003
+      routes:
+      - name: payments
+        methods: [GET, POST, DELETE]
+        paths:
+        - /payments/order/(?<id>\d+)
+        - /payments/order/(?<id>\d+)/approve
+        - /payments/order/(?<id>\d+)/cancel
+        plugins:
+        - name: request-transformer
+          config:
+            add:
+              headers:
+              - "Content-Type: application/json"
+        strip_path: false
 
     - name: ms_checkin_categories
       url: http://ms-checkin-service:3001/products/category
@@ -65,23 +81,6 @@ data:
         - /orders/(?<id>\d+)/withdrawn
         - /orders/customer/(?<id>\d+)
         - /orders/(?<id>\d+)/status
-        plugins:
-        - name: request-transformer
-          config:
-            add:
-              headers:
-              - "Content-Type: application/json"
-        strip_path: false
-
-    - name: ms_financial
-      url: http://ms-financial-service:3003
-      routes:
-      - name: payments
-        methods: [GET, POST, DELETE]
-        paths:
-        - /payments/order/(?<id>\d+)
-        - /payments/order/(?<id>\d+)/approve
-        - /payments/order/(?<id>\d+)/cancel
         plugins:
         - name: request-transformer
           config:
