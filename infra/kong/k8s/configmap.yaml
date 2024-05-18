@@ -83,10 +83,6 @@ data:
         - /payments/order/(?<id>\d+)/approve
         - /payments/order/(?<id>\d+)/cancel
         plugins:
-        - name: http-log
-          config:
-            http_endpoint: https://webhook.site/ad3a0bcc-25f8-491e-8c18-fae253167580
-            method: POST
         - name: request-transformer
           config:
             add:
@@ -108,6 +104,10 @@ data:
             minute: 5
             hour: 10
             policy: local
+        - name: http-log
+          config:
+            http_endpoint: https://webhook.site/ad3a0bcc-25f8-491e-8c18-fae253167580
+            method: POST
         strip_path: false
 
     consumers:

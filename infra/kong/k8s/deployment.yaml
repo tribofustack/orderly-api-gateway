@@ -42,10 +42,12 @@ spec:
           value: "debug"
         - name: KONG_PLUGINS
           value: "bundled,jwt"
+
         volumeMounts:
         - name: kong-config-volume
           mountPath: /tmp/kong-config.yml
           subPath: kong-config.yml
+
       volumes:
       - name: kong-config-volume
         configMap:
