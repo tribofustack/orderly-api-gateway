@@ -21,6 +21,7 @@ Orderly is a cutting-edge web system designed to streamline operations for resta
 
 ## 🔗 Links
 
+- [Wiki](https://github.com/tribofustack/orderly-api-gateway/wiki)
 - [Demonstration Video]()
 - [Postman Public Collection](https://documenter.getpostman.com/view/13574011/2s9YsM8WDL)
 
