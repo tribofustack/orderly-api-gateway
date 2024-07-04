@@ -46,17 +46,42 @@ services:
     methods: [POST, PUT, DELETE, GET]
     strip_path: false
 
+- name: orch_saga
+  url: http://orch_saga:3333
+  routes:
+  - name: saga
+    methods: [POST]
+    paths:
+    - /saga/checkout
+    plugins:
+    - name: request-transformer
+      config:
+        add:
+          headers:
+          - "Content-Type: application/json"
+    strip_path: false
+
 - name: ms_checkout
   url: http://ms_checkout:3002
   routes:
   - name: orders
     methods: [GET, POST]
     paths:
-    - /orders
     - /orders/(?<id>\d+)/prepare
     - /orders/(?<id>\d+)/withdrawn
     - /orders/customer/(?<id>\d+)
     - /orders/(?<id>\d+)/status
+    plugins:
+    - name: request-transformer
+      config:
+        add:
+          headers:
+          - "Content-Type: application/json"
+    strip_path: false
+  - name: list_orders
+    methods: [GET]
+    paths:
+    - /orders
     plugins:
     - name: request-transformer
       config:
@@ -82,25 +107,25 @@ services:
           - "Content-Type: application/json"
     strip_path: false
 
-- name: ms_auth
-  url: http://ms_auth:3000
-  routes:
-  - name: auth
-    methods: [POST]
-    paths:
-    - /customer/auth
-    plugins:
-    - name: rate-limiting
-      config:
-        second: 3
-        minute: 5
-        hour: 10
-        policy: local
-    - name: http-log
-      config:
-        http_endpoint: https://webhook.site/ad3a0bcc-25f8-491e-8c18-fae253167580
-        method: POST
-    strip_path: false
+# - name: ms_auth
+#   url: http://ms_auth:3000
+#   routes:
+#   - name: auth
+#     methods: [POST]
+#     paths:
+#     - /customer/auth
+#     plugins:
+#     - name: rate-limiting
+#       config:
+#         second: 3
+#         minute: 5
+#         hour: 10
+#         policy: local
+#     - name: http-log
+#       config:
+#         http_endpoint: https://webhook.site/ad3a0bcc-25f8-491e-8c18-fae253167580
+#         method: POST
+#     strip_path: false
 
 consumers:
 - username: orderly
@@ -109,6 +134,13 @@ consumers:
     secret: this_is_a_super_secret
 
 plugins:
+# - name: jwt
+#   service: orch_saga
+#   enabled: true
+#   config:
+#     key_claim_name: kid
+#     claims_to_verify:
+#     - exp
 - name: jwt
   service: ms_financial
   enabled: true

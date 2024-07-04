@@ -150,6 +150,27 @@ services:
       retries: 3
       start_period: 30s
 
+  orch_saga:
+    build: ./orch-saga
+    container_name: orch-saga
+    volumes:
+      - ./orch-saga:/usr/orch/saga
+    networks:
+      - orderly-net
+    depends_on:
+      - rabbitmq
+    restart: on-failure
+    links:
+      - rabbitmq
+    env_file:
+      - ./orch-saga/.env
+    # healthcheck:
+    #   test: ["CMD", "curl", "--fail", "http://ms_checkout:3002/health"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 30s
+
   # financial
   ms_financial_db:
     build: ./infra/postgres
@@ -190,29 +211,28 @@ services:
       start_period: 30s
 
   # auth
-  ms_auth_db:
-    image: mongo
-    container_name: ms-auth-database
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    env_file:
-      - ./ms-auth/.env.production
-    networks:
-      - orderly-net  
-  
-  ms_auth:
-    build: ./ms-auth
-    container_name: ms-auth-api
-    volumes:
-      - ./ms-auth:/usr/auth/api
-    networks:
-      - orderly-net
-    depends_on:
-      - ms_auth_db
-    restart: on-failure
-    links:
-      - ms_auth_db
-    env_file:
-      - ./ms-auth/.env.production
+  # ms_auth_db:
+  #   image: mongo
+  #   container_name: ms-auth-database
+  #   restart: always
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: example
+  #   env_file:
+  #     - ./ms-auth/.env.production
+  #   networks:
+  #     - orderly-net  
+  # ms_auth:
+    # build: ./ms-auth
+    # container_name: ms-auth-api
+    # volumes:
+    #   - ./ms-auth:/usr/auth/api
+    # networks:
+    #   - orderly-net
+    # depends_on:
+    #   - ms_auth_db
+    # restart: on-failure
+    # links:
+    #   - ms_auth_db
+    # env_file:
+    #   - ./ms-auth/.env.production
