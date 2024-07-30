@@ -12,10 +12,16 @@ data:
     }
     http {
         default_type application/octet-stream;  
+        upstream kong-api-gateway {
+            server kong-service:8000;
+        }
         upstream rabbitmq {
             least_conn;
             server broker-service-controlpanel:15672 weight=10 max_fails=3 fail_timeout=30s;
         }  
+        upstream financial-api {
+            server ms-financial-service:3003;
+        }
         server {
             listen 80;
             
@@ -36,7 +42,20 @@ data:
                 proxy_set_header X-Forwarded-Proto $scheme;
             }
             location /api/ {
-                proxy_pass http://kong-service:8000/;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_hide_header X-Powered-By;
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Forwarded-Proto $scheme;    
+                proxy_pass http://kong-api-gateway/;         
+            }
+            location /financial/ {
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_hide_header X-Powered-By;
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Forwarded-Proto $scheme;    
+                proxy_pass http://financial-api/;         
             }
             location /kong/config/ {
                 proxy_pass http://kong-service:8001/;        

@@ -1,23 +1,23 @@
 _format_version: "3.0"
 _transform: true
 
-# - name: financial
-#   url: http://ms_financial:3003
-#   routes:
-#   - name: payments_routes
-#     methods: [GET, POST]
-#     paths:
-#     - /payments/order/(?<id>\d+)
-#     - /payments/order/(?<id>\d+)/approve
-#     - /payments/order/(?<id>\d+)/cancel
-#     plugins:
-#     - name: request-transformer
-#       config:
-#         add:
-#           headers:
-#           - "Content-Type: application/json"
-#     strip_path: false
 services:
+- name: financial
+  url: http://ms_financial:3003
+  routes:
+  - name: payments_routes
+    methods: [GET, POST]
+    paths:
+    - /payments/order/(?<id>\d+)
+    - /payments/order/(?<id>\d+)/approve
+    - /payments/order/(?<id>\d+)/cancel
+    plugins:
+    - name: request-transformer
+      config:
+        add:
+          headers:
+          - "Content-Type: application/json"
+    strip_path: false
 - name: checkin_categories
   url: http://ms_checkin:3001/products/category
   routes:
