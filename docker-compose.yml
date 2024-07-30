@@ -8,7 +8,7 @@ volumes:
   ms_checkin_db:
   ms_checkout_db:
   ms_financial_db:
-  kong_data: {}
+  # kong_data: {}
 
 services:
   rabbitmq:
@@ -35,14 +35,8 @@ services:
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /tmp/kong-config.yml
-      KONG_PROXY_ACCESS_LOG: /dev/stdout
-      KONG_ADMIN_ACCESS_LOG: /dev/stdout
-      KONG_PROXY_ERROR_LOG: /dev/stderr
-      KONG_ADMIN_ERROR_LOG: /dev/stderr
-      KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
-      KONG_LOG_LEVEL: debug
       KONG_PLUGINS: bundled
-    restart: on-failure
+    restart: always
     healthcheck:
       test: [ "CMD", "kong", "health" ]
       interval: 10s
@@ -99,9 +93,11 @@ services:
       - orderly-net
     depends_on:
       - ms_checkin_db
+      - rabbitmq
     restart: always
     links:
       - ms_checkin_db
+      - rabbitmq
     env_file:
       - ./ms-checkin/.env.production
     healthcheck:
@@ -134,10 +130,10 @@ services:
       - ./ms-checkout:/usr/checkout/api
     networks:
       - orderly-net
+    restart: on-failure
     depends_on:
       - ms_checkout_db
       - rabbitmq
-    restart: on-failure
     links:
       - ms_checkout_db
       - rabbitmq
@@ -194,14 +190,15 @@ services:
     image: mongo
     container_name: ms-auth-database
     restart: always
+    ports:
+      - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_PASSWORD: root_password
     env_file:
       - ./ms-auth/.env.production
     networks:
       - orderly-net  
-  
   ms_auth:
     build: ./ms-auth
     container_name: ms-auth-api
