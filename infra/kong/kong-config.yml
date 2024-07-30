@@ -1,10 +1,27 @@
-_format_version: "1.1"
+_format_version: "3.0"
+_transform: true
 
+# - name: financial
+#   url: http://ms_financial:3003
+#   routes:
+#   - name: payments_routes
+#     methods: [GET, POST]
+#     paths:
+#     - /payments/order/(?<id>\d+)
+#     - /payments/order/(?<id>\d+)/approve
+#     - /payments/order/(?<id>\d+)/cancel
+#     plugins:
+#     - name: request-transformer
+#       config:
+#         add:
+#           headers:
+#           - "Content-Type: application/json"
+#     strip_path: false
 services:
-- name: ms_checkin_categories
+- name: checkin_categories
   url: http://ms_checkin:3001/products/category
   routes:
-  - name: get-categories
+  - name: get_categories_router
     methods: [GET]
     paths:
     - /categories
@@ -16,10 +33,10 @@ services:
         hour: 10
         policy: local
     strip_path: true
-- name: ms_checkin
+- name: checkin
   url: http://ms_checkin:3001
   routes:
-  - name: customers
+  - name: customers_routes
     methods: [GET, POST]
     paths:
     - /customers
@@ -32,7 +49,7 @@ services:
           headers:
           - "Content-Type: application/json"
     strip_path: false
-  - name: products
+  - name: products_routes
     paths:
     - /products
     - /products/(?<id>\d+)
@@ -45,60 +62,17 @@ services:
           - "Content-Type: application/json"
     methods: [POST, PUT, DELETE, GET]
     strip_path: false
-
-- name: orch_saga
-  url: http://orch_saga:3333
-  routes:
-  - name: saga
-    methods: [POST]
-    paths:
-    - /saga/checkout
-    plugins:
-    - name: request-transformer
-      config:
-        add:
-          headers:
-          - "Content-Type: application/json"
-    strip_path: false
-
-- name: ms_checkout
+- name: checkout
   url: http://ms_checkout:3002
   routes:
-  - name: orders
+  - name: orders_routes
     methods: [GET, POST]
     paths:
+    - /orders
     - /orders/(?<id>\d+)/prepare
     - /orders/(?<id>\d+)/withdrawn
     - /orders/customer/(?<id>\d+)
     - /orders/(?<id>\d+)/status
-    plugins:
-    - name: request-transformer
-      config:
-        add:
-          headers:
-          - "Content-Type: application/json"
-    strip_path: false
-  - name: list_orders
-    methods: [GET]
-    paths:
-    - /orders
-    plugins:
-    - name: request-transformer
-      config:
-        add:
-          headers:
-          - "Content-Type: application/json"
-    strip_path: false
-
-- name: ms_financial
-  url: http://ms_financial:3003
-  routes:
-  - name: payments
-    methods: [GET, POST, DELETE]
-    paths:
-    - /payments/order/(?<id>\d+)
-    - /payments/order/(?<id>\d+)/approve
-    - /payments/order/(?<id>\d+)/cancel
     plugins:
     - name: request-transformer
       config:
@@ -127,13 +101,13 @@ services:
 #         method: POST
 #     strip_path: false
 
-consumers:
-- username: orderly
-  jwt_secrets:
-  - algorithm: HS256
-    secret: this_is_a_super_secret
+# consumers:
+# - username: orderly
+#   jwt_secrets:
+#   - algorithm: HS256
+#     secret: this_is_a_super_secret
 
-plugins:
+# plugins:
 # - name: jwt
 #   service: orch_saga
 #   enabled: true
@@ -141,25 +115,25 @@ plugins:
 #     key_claim_name: kid
 #     claims_to_verify:
 #     - exp
-- name: jwt
-  service: ms_financial
-  enabled: true
-  config:
-    key_claim_name: kid
-    claims_to_verify:
-    - exp
-- name: jwt
-  service: ms_checkout
-  enabled: true
-  config:
-    key_claim_name: kid
-    claims_to_verify:
-    - exp
-- name: jwt
-  service: ms_checkin
-  enabled: true
-  config:
-    key_claim_name: kid
-    claims_to_verify:
-    - exp
+# - name: jwt
+#   service: ms_financial
+#   enabled: true
+#   config:
+#     key_claim_name: kid
+#     claims_to_verify:
+#     - exp
+# - name: jwt
+#   service: ms_checkout
+#   enabled: true
+#   config:
+#     key_claim_name: kid
+#     claims_to_verify:
+#     - exp
+# - name: jwt
+#   service: ms_checkin
+#   enabled: true
+#   config:
+#     key_claim_name: kid
+#     claims_to_verify:
+#     - exp
 
