@@ -22,6 +22,12 @@ data:
         upstream financial-api {
             server ms-financial-service:3003;
         }
+        upstream checkout-api {
+            server ms-checkout-service:3002;
+        }
+        upstream checkin-api {
+            server ms-checkin-service:3001;
+        }
         server {
             listen 80;
             
@@ -41,12 +47,7 @@ data:
                 proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
                 proxy_set_header X-Forwarded-Proto $scheme;
             }
-            location /api/ {
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_hide_header X-Powered-By;
-                proxy_set_header Host $http_host;
-                proxy_set_header X-Forwarded-Proto $scheme;    
+            location /api/ {    
                 proxy_pass http://kong-api-gateway/;         
             }
             location /financial/ {
@@ -56,6 +57,22 @@ data:
                 proxy_set_header Host $http_host;
                 proxy_set_header X-Forwarded-Proto $scheme;    
                 proxy_pass http://financial-api/;         
+            }
+            location /checkout/ {
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_hide_header X-Powered-By;
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Forwarded-Proto $scheme;    
+                proxy_pass http://checkout-api/;         
+            }
+            location /checkin/ {
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_hide_header X-Powered-By;
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Forwarded-Proto $scheme;    
+                proxy_pass http://checkin-api/;         
             }
             location /kong/config/ {
                 proxy_pass http://kong-service:8001/;        

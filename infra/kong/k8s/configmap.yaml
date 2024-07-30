@@ -6,7 +6,9 @@ metadata:
 data:
   kong-config.yml: |
     _format_version: "3.0"
+
     services:
+
     - name: ms_financial
       url: http://ms-financial-service:3003
       routes:
@@ -23,6 +25,7 @@ data:
               headers:
               - "Content-Type: application/json"
         strip_path: false
+
     - name: ms_checkin
       url: http://ms-checkin-service:3001
       routes:
@@ -53,6 +56,7 @@ data:
               - "Content-Type: application/json"
         methods: [POST, PUT, DELETE, GET]
         strip_path: false
+
     - name: ms_checkout
       url: http://ms-checkout-service:3002
       routes:
@@ -71,6 +75,7 @@ data:
               headers:
               - "Content-Type: application/json"
         strip_path: false
+
     - name: ms_auth
       url: http://ms-auth-service:3000
       routes:
@@ -90,6 +95,7 @@ data:
             http_endpoint: https://webhook.site/ad3a0bcc-25f8-491e-8c18-fae253167580
             method: POST
         strip_path: false
+
     consumers:
     - username: orderly
       jwt_secrets:
