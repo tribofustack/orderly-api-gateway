@@ -22,11 +22,8 @@ data:
         upstream financial-api {
             server ms-financial-service:3003;
         }
-        upstream checkout-api {
-            server ms-checkout-service:3002;
-        }
-        upstream checkin-api {
-            server ms-checkin-service:3001;
+        upstream auth-api {
+            server ms-auth-service:3000;
         }
         server {
             listen 80;
@@ -58,21 +55,13 @@ data:
                 proxy_set_header X-Forwarded-Proto $scheme;    
                 proxy_pass http://financial-api/;         
             }
-            location /checkout/ {
+            location /auth/ {
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_hide_header X-Powered-By;
                 proxy_set_header Host $http_host;
                 proxy_set_header X-Forwarded-Proto $scheme;    
-                proxy_pass http://checkout-api/;         
-            }
-            location /checkin/ {
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_hide_header X-Powered-By;
-                proxy_set_header Host $http_host;
-                proxy_set_header X-Forwarded-Proto $scheme;    
-                proxy_pass http://checkin-api/;         
+                proxy_pass http://auth-api/;         
             }
             location /kong/config/ {
                 proxy_pass http://kong-service:8001/;        
