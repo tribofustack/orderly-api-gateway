@@ -83,6 +83,7 @@ data:
         methods: [POST]
         paths:
         - /customer/auth
+        - /customer/deleteCustomer
         plugins:
         - name: rate-limiting
           config:
