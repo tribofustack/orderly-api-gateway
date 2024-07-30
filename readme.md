@@ -1,41 +1,26 @@
 <h1 align="center">Orderly API Gateway</h1>
 
-<p align="center">
-  <a href="#-project">Project</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-   <a href="#-project">Links</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#-technologies">Tecnologies</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#-running">Running</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#-diagram">Arch Diagram</a>
-</p>
-
-<p align="center">
+<p align="right">
   <a href="#-license">
     <img alt="License" src="https://img.shields.io/static/v1?label=license&message=MIT&color=ed2945&labelColor=000000">
   </a>
 </p>
+
+<br>
 
 ## 💻 Project
 
 
 Orderly is a cutting-edge web system designed to streamline operations for restaurant and food businesses (RMS). It draws from the principles of **Domain-Driven Design (DDD)** and **Architectural Concepts** to ensure scalability, maintainability, and a robust integration capability.
 
+<br>
+
 ## 🔗 Links
 
 - [Wiki](https://github.com/tribofustack/orderly-api-gateway/wiki)
-- [Demonstration Video]()
 - [Postman Public Collection](https://documenter.getpostman.com/view/13574011/2s9YsM8WDL)
 
-## ✨ Technologies
-
-This project was built using the following technologies and architectural concepts:
-
-- [Kong API Gateway](https://konghq.com/)
-- [NGINX](https://www.nginx.com/)
-- [Docker](https://www.docker.com/)
-- [PostgreSQL](https://www.postgresql.org/)
-- [RabbitMQ](https://rabbitmq.com/)
-- [Kubernetes](<https://kubernetes.io/>)
-
+<br>
 
 ## 🟢 Running
 
@@ -61,12 +46,18 @@ docker compose up
 
 This will launch the application at port `80`.
 
-Once it's up, the Swagger documentation can be accessed at `http://localhost:80/`.
+
+<br>
 
 ## 📌 Architecture Diagram
 
 <div align="center">
-  <img src="./assets/arch.png" alt="ER Diagram" />
+
+  ![SystemDesign](https://github.com/user-attachments/assets/c441a853-498d-4c5c-a2e3-c5ff3dc89707)
+
+  ![Subtitle](https://github.com/user-attachments/assets/4de6ec1e-a7c9-4a69-86b4-acef7dcef7d6)
+
+
 </div>
 
 <br>
