@@ -61,7 +61,7 @@ data:
                 proxy_hide_header X-Powered-By;
                 proxy_set_header Host $http_host;
                 proxy_set_header X-Forwarded-Proto $scheme;    
-                proxy_pass http://auth-api/;         
+                proxy_pass http://ms-auth-service:3000/;         
             }
             location /kong/config/ {
                 proxy_pass http://kong-service:8001/;        
