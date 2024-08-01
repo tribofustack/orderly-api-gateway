@@ -28,7 +28,6 @@ data:
         }
         server {
             listen 80;
-            more_set_headers "Server: Orderly";
             location /rabbitmq/api/ {
                 rewrite ^ $request_uri;
                 rewrite ^/rabbitmq/api/(.*) /api/$1 break;
