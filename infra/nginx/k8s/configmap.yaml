@@ -11,7 +11,8 @@ data:
         worker_connections 1024;
     }
     http {
-        default_type application/octet-stream;  
+        default_type application/octet-stream; 
+        server_tokens off; 
         upstream kong-api-gateway {
             server kong-service:8000;
         }
@@ -27,7 +28,7 @@ data:
         }
         server {
             listen 80;
-            
+            more_set_headers "Server: Orderly";
             location /rabbitmq/api/ {
                 rewrite ^ $request_uri;
                 rewrite ^/rabbitmq/api/(.*) /api/$1 break;
