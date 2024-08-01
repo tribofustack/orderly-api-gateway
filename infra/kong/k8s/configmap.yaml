@@ -8,7 +8,6 @@ data:
     _format_version: "3.0"
 
     services:
-
     - name: ms_financial
       url: http://ms-financial-service:3003
       routes:
