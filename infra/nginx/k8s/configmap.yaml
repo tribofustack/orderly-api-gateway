@@ -11,7 +11,8 @@ data:
         worker_connections 1024;
     }
     http {
-        default_type application/octet-stream;  
+        default_type application/octet-stream; 
+        server_tokens off; 
         upstream kong-api-gateway {
             server kong-service:8000;
         }
@@ -27,7 +28,6 @@ data:
         }
         server {
             listen 80;
-            
             location /rabbitmq/api/ {
                 rewrite ^ $request_uri;
                 rewrite ^/rabbitmq/api/(.*) /api/$1 break;
@@ -61,7 +61,7 @@ data:
                 proxy_hide_header X-Powered-By;
                 proxy_set_header Host $http_host;
                 proxy_set_header X-Forwarded-Proto $scheme;    
-                proxy_pass http://auth-api/;         
+                proxy_pass http://ms-auth-service:3000/;         
             }
             location /kong/config/ {
                 proxy_pass http://kong-service:8001/;        
